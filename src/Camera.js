@@ -10,18 +10,18 @@ export default class Camera {
       this.lerpFactor = lerpFactor
     }
   
-    update(player) {
+    update(positionX, positionY) {
 
         const halfWidth = this.width / 2
         const halfHeight = this.height / 2
         const maxX = this.game.level[this.game.currentLevel].width
         //const maxY = this.game.level[this.game.currentLevel].height
   
-        let targetX = Math.min(Math.max(player.positionX - halfWidth, this.minX), maxX)
+        let targetX = Math.min(Math.max(positionX - halfWidth, this.minX), maxX)
         //let targetY = Math.min(Math.max(player.y - halfHeight, this.minY), maxY)
   
         //let targetX = player.x - halfWidth
-        let targetY = player.positionY - halfHeight
+        let targetY = positionY - halfHeight
   
         this.x += (targetX - this.x) * this.lerpFactor
         //if (player.positionY <  this.game.height/2)

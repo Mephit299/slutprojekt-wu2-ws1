@@ -1,5 +1,7 @@
 import Map from "../Map";
 import Platform from "../Platform";
+import Collectable from "../Collectable";
+import Zombie from "../zombie";
 
 
 export default class levelOne extends Map {
@@ -7,15 +9,13 @@ export default class levelOne extends Map {
         super(game, 2400, 500)
         this.game = game;
 
-        this.addPlatform(new Platform(game, -100, 430, 4000, 70, true, true))
-        this.addPlatform(new Platform(game, 1240, 300, 200, 20, true, false))
-        this.addPlatform(new Platform(game, 750, 300, 200, 20, true, false))
-        this.addPlatform(new Platform(game, 2490, 270, 180, 20, true, true))
-        this.addPlatform(new Platform(game, 2855, 270, 180, 20, true, true))
-        this.addPlatform(new Platform(game, 1000, 180, 200, 20, true , false))
+        this.addPlatform(new Platform(game, -100, 670, 4000, 50, true, false))
+        this.addPlatform(new Platform(game, -100, 335, 4000, 35, true, false))
+
     }
     generateEnemies(enemies){
-        enemies = [];
+        enemies = [new Collectable(this.game, 400, 600, 20,20),
+            new Zombie(this.game, 500, 200)];
         
             return(enemies);
     }

@@ -138,7 +138,7 @@ export default class Enemy{
           
         
     }
-    playerKnockback(){
+    playerKnockback(){ // behövs ändras
         if (this.game.player.positionX + 5 < this.positionX){
             this.speedX = this.knockbackSpeedX -2
             this.positionX += 10
@@ -171,6 +171,15 @@ export default class Enemy{
         this.runningMaxFrame = my;
         this.takesDamageFrameY = dy
         this.takesDamageMaxFrame =dmy;
+    }
+
+    setEnemy(enemy){
+        console.log(enemy)
+        this.positionX = enemy.positionX;
+        this.positionY = enemy.positionY;
+        this.hp = enemy.hp;
+        this.speedX = enemy.speedX;
+        this.speedY = enemy.speedY;
     }
 
 }
