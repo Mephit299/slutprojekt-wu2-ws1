@@ -49,6 +49,7 @@ export default class Enemy{
         this.takesDamageMaxFrame = 3;
         this.takesDamageFrameY = 4;
 
+        this.id = 0;
         
     }
 
@@ -138,8 +139,8 @@ export default class Enemy{
           
         
     }
-    playerKnockback(){ // behövs ändras
-        if (this.game.player.positionX + 5 < this.positionX){
+    playerKnockback(player){ // behövs ändras
+        if (player.positionX + 5 < this.positionX){
             this.speedX = this.knockbackSpeedX -2
             this.positionX += 10
             this.hitboxX += 10
@@ -173,8 +174,7 @@ export default class Enemy{
         this.takesDamageMaxFrame =dmy;
     }
 
-    setEnemy(enemy){
-        console.log(enemy)
+  async  setEnemy(enemy){
         this.positionX = enemy.positionX;
         this.positionY = enemy.positionY;
         this.hp = enemy.hp;

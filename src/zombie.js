@@ -14,7 +14,7 @@ export default class Zombie extends Enemy{
         super.adjustHitbox(16,16)
         super.changeSprite(5, 4, 6, 3)
 
-        
+        this.id = 1;
         
     }
 
@@ -28,7 +28,7 @@ export default class Zombie extends Enemy{
         }
         if (this.speedY > 10)
           this.speedY = 10;
-        if (this.game.player.positionX + this.game.width/2 + 50 > this.positionX || this.game.width +50 > this.positionX){
+        if (this.game.player.positionX + this.game.width/2 + 50 > this.positionX || this.game.width +50 > this.positionX || this.game.player2.positionX +this.game.width/2 +50 > this.positionX){
         this.positionY += this.speedY
         this.positionX += this.speedX
         this.hitboxX = this.positionX + this.hitboxXMagicNumber;

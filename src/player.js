@@ -216,6 +216,7 @@ export default class Player {
             this.ammo--
             this.shootTimer = 500;
             this.game.socket.emit('shoot', {x:this.positionX + this.width / 2 , y:this.positionY + this.height / 2 , direction: this.direction})
+            console.log('shoot')
         }
     }
     /*strike() {

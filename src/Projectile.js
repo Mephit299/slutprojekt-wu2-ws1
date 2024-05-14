@@ -24,10 +24,11 @@ export default class Projectile{
     }
 
     update(deltaTime){
+        console.log('projectile')
         if (this.direction === 1)
             this.positionX += this.speed
         else this.positionX -= this.speed
-        if (this.positionX > this.game.camera.x + this.game.width)
+        if (this.positionX > this.game.width)
             this.markedForDeletion = true
             this.hitboxX = this.positionX + this.hitboxXMagicNumber;
             this.hitboxY = this.positionY + this.hitboxYMagicNumber;
@@ -39,5 +40,14 @@ export default class Projectile{
     draw(context){
         context.fillStyle = "black"
         context.fillRect(this.positionX,this.positionY,this.width,this.height)
+    }
+    sendProjectile(){
+        const projectile = {
+            positionX: this.positionX,
+            positionY: this.positionY,
+            direction: this.direction            
+        }
+        return(projectile)
+
     }
 }

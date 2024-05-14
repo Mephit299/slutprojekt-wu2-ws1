@@ -19,6 +19,7 @@ export default class Collectable extends Enemy{
     }
 
     pickup(){
+        //this.game.socket.emit('collectedCollectable', {index: i})
         this.markedForDeletion = true;
     }
 

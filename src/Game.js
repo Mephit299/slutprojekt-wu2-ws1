@@ -56,7 +56,10 @@ export default class Game {
     this.singlePlayer = true;
     this.canControlPlayer2 = true;
 
-    window.addEventListener("focus", (event) =>{ //skickar hela tiden ut sync requests
+
+
+    //Socket.io
+    window.addEventListener("focus", (event) =>{ 
       console.log(':)')
       this.socket.emit('syncRequest')
     })
@@ -64,16 +67,14 @@ export default class Game {
     this.socket.on('playerJoined', () => {  // allt är endast funktionelt om max 2 klienter existerar.
       console.log('player joined');
       this.socket.emit('existingPlayer', { x1: this.player.positionX, y1: this.player.positionY, x2: this.player2.positionX, y2: this.player2.positionY, level: this.currentLevel });
-      let test = [];
+      let simpleEnemies = [];
       this.enemies.forEach((enemy, i) => {
-        test.push(new sendEnemy(enemy))
+        simpleEnemies.push(new sendEnemy(enemy))
       });
-      this.socket.emit('enemies', { enemies: test })
-      //this.other.tint = Math.random() * 0xffffff; 
-      // let other = new Player(this, PLAYER_START_X, PLAYER_START_Y, 'player');
-      // this.others.push(other);
+      this.socket.emit('enemies', { enemies: simpleEnemies })
     });
-    this.socket.on('existingPlayer', (x1, y1, x2, y2, level) => { // om 2 spelara ansluter sig sammtidigt blir det problem och om spelar 1 inte har rört sig.
+
+    this.socket.on('existingPlayer', (x1, y1, x2, y2, level) => { 
       if (this.player.positionY === new Player(this, 3).positionY) {
         if (this.currentLevel != level){
           this.currentLevel = level -1;
@@ -85,10 +86,12 @@ export default class Game {
       this.canControlPlayer2 = false;
       this.singlePlayer = false;
     });
+
     this.socket.on('2Players', () => {
       this.canControlPlayer2 = false;
       this.singlePlayer = false;
-    })
+    });
+
     this.socket.on('move', (x, y) => {
       if (this.player2) {
         if (this.player2.positionX > x) {
@@ -104,34 +107,57 @@ export default class Game {
 
       }
     });
-    this.socket.on('moveEnd', () => { //Körs en ologisk mängd gånger.
-      console.log('moveEnd')
+
+    this.socket.on('moveEnd', () => { 
         this.player2.maxFrame = this.player2.idelmaxFrame;
         this.player2.frameY = this.player2.idelFrameY;
     });
+
     this.socket.on('playerDisconnected', () => {
       //look for other players.
       //om det finns en annan spelara ge den player2
       //om det inte finns en annan spelara ge player 1 player 2
       this.canControlPlayer2 = true;
       this.singlePlayer = true;
-    })
+    });
+
     this.socket.on('enemies', (enemies) => {
+      // recreate enemies
+      let newEnemies = []
+      try {
+       let placeholder = new sendEnemy(enemies[0])
+      
+      enemies.forEach((enemy) =>{
+        newEnemies.push(placeholder.createEnemy(enemy, this))
+      });
+      } catch{}
+      // update enemies
+      this.enemies = newEnemies;
       this.enemies.forEach((enemy, i) => {
         enemy.setEnemy(enemies[i])
       });
-    })
+    });
+
     this.socket.on('enemyChange', (enemy, i) => {
       this.enemies[i].setEnemy(enemy)
-    })
+    });
+
     this.socket.on('shoot', (x, y, direction) =>{
       this.projectiles.push(new Projectile(this, x, y, direction))
+    });
+
+    this.socket.on('projectiles', (projectiles) =>{
+      projectiles.forEach((projectile, i) =>{
+      this.projectiles[i] = projectile;
+      });
     })
+
     this.socket.on('disconnect', () =>{
       console.log('disconnect')
       TouchList.canControlPlayer2 = true;
       this.singlePlayer = true;
-    })
+    });
+
     this.socket.on('syncRequest', () =>{
       /* vad ska skickas
       båda spelarnas x och y kordinater
@@ -139,23 +165,29 @@ export default class Game {
       projectiles
       tror inte level behövs
       */
-      this.socket.emit('syncEvent', {x1: this.player.positionX, y1: this.player.positionY, x2: this.player2.positionX, y2: this.player2.positionY}) //, projectiles: this.projectiles
-      let test = [];
+      this.socket.emit('syncEvent', {x1: this.player.positionX, y1: this.player.positionY, x2: this.player2.positionX, y2: this.player2.positionY})
+      let simpleEnemies = [];
       this.enemies.forEach((enemy, i) => {
-        test.push(new sendEnemy(enemy))
+        simpleEnemies.push(new sendEnemy(enemy))
       });
-      this.socket.emit('enemies', {enemies: test})
-    })
+      this.socket.emit('enemies', {enemies: simpleEnemies})
+      let simpleProjectiles = []
+      this.projectiles.forEach((projectile) => {
+        simpleProjectiles.push(projectile.sendProjectile())
+      });
+      this.socket.emit('projectiles', {projectiles: simpleProjectiles})
+    });
+
     this.socket.on('syncEvent', (x1, y1, x2, y2) =>{
       this.updatePlayers(x1, y1, x2, y2);
       //this.projectiles = projectiles;
-    })
+    });
 
   }
 
 
 
-  update(deltaTime) { // Baseras på klientens fps och om fönstret har fokus. Kanse gör alla socket.io calls sammtidigt
+  update(deltaTime) {
     if (this.player.hp < 1)
       this.gameOver = true;
     if (!this.pause) {
@@ -173,7 +205,6 @@ export default class Game {
 
         return
       }
-      if (!this.pause) {
 
         const playerMoved = this.player.update(deltaTime) //flytta spelare
 
@@ -186,7 +217,7 @@ export default class Game {
           }
           this.player.movedLastFrame = false;
         }
-      }
+      
 
       if (this.canControlPlayer2) {
         this.player2.update(deltaTime)
@@ -211,6 +242,7 @@ export default class Game {
         //}
 
         this.projectiles.forEach((projectile) => { // To do: Brodcast new projectiles to server
+          projectile.update(deltaTime);
           if (this.checkCollision(projectile, enemy)) {
             if (!enemy.attackId.includes(projectile.attackId)) {
               enemy.hp -= projectile.damage
@@ -264,10 +296,9 @@ export default class Game {
     //this.background.draw(context)
     this.level[this.currentLevel].draw(context)
     this.player.draw(context)
+    this.player2.draw(context)
     this.enemies.forEach((enemy) => enemy.draw(context))
-    try {
-      this.player2.draw(context)
-    } catch { }
+    this.projectiles.forEach((projectile) => projectile.draw(context));
     this.camera.reset(context);
     this.ui.draw(context)
 
@@ -313,14 +344,14 @@ export default class Game {
       else {
         if (player.iFrames <= 0)
           player.hp--
-        enemy.playerKnockback()
+        enemy.playerKnockback(player)
         player.iFrames = 300;
         player.knockback(enemy.flip)
       }
     }
   }
 
-  uppadeteprojectiles() {
+  updateprojectiles() {
     this.projectiles.forEach((projectile) => {
       projectile.update(deltaTime)
       /*if (projectile.meleeAttack) {
