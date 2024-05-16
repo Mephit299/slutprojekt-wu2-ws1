@@ -52,7 +52,7 @@ export default class Game {
       document.title,
       updateQueryParameter('room', this.room)
     );
-    this.socket = io(`http://localhost:3000?room=${this.room}`);
+    this.socket = io(`https://branched-amused-headstand.glitch.me/?room=${this.room}`);
     this.singlePlayer = true;
     this.canControlPlayer2 = true;
 
@@ -61,6 +61,7 @@ export default class Game {
     //Socket.io
     window.addEventListener("focus", (event) =>{ 
       console.log(':)')
+      console.log(this.player.id)
       this.socket.emit('syncRequest')
     })
 
@@ -85,6 +86,8 @@ export default class Game {
       }
       this.canControlPlayer2 = false;
       this.singlePlayer = false;
+      this.player.id = 1;
+      this.player2.id = 0;
     });
 
     this.socket.on('2Players', () => {
@@ -147,9 +150,11 @@ export default class Game {
     });
 
     this.socket.on('projectiles', (projectiles) =>{
-      projectiles.forEach((projectile, i) =>{
-      this.projectiles[i] = projectile;
+      let newProjectiles = []
+      projectiles.forEach((projectile) => {
+        newProjectiles.push(new Projectile(this, projectile.positionX, projectile.positionY, projectile.direction))
       });
+      this.projectiles = newProjectiles;
     })
 
     this.socket.on('disconnect', () =>{
@@ -340,7 +345,7 @@ export default class Game {
 
   playerEnemyCollision(player, enemy) {
     if (this.checkCollision(player, enemy)) {
-      if (enemy.isCollectable) { enemy.pickup() }
+      if (enemy.isCollectable) { enemy.pickup(player.id) }
       else {
         if (player.iFrames <= 0)
           player.hp--

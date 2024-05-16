@@ -5,10 +5,10 @@ import { io } from'socket.io-client'
 import { getQueryParameter, getRandomString } from './utils';
 
 let room = getQueryParameter('room') || getRandomString(8);
-let socket = io(`http://localhost:3000?room=${room}`);
+let socket = io(`https://branched-amused-headstand.glitch.me/?room=${room}`); //idk man
 
 document.querySelector('#app').innerHTML = `
-  <canvas id="canvas1"></canvas>
+  <canvas id="canvas1"></canvas> 
 `
 
 setup(document.querySelector('#canvas1'))

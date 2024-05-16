@@ -18,7 +18,7 @@ export default class Collectable extends Enemy{
         this.hitboxY = this.positionY + this.hitboxYMagicNumber;
     }
 
-    pickup(){
+    pickup(id){
         //this.game.socket.emit('collectedCollectable', {index: i})
         this.markedForDeletion = true;
     }

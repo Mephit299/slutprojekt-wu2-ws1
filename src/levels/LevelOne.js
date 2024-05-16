@@ -2,6 +2,7 @@ import Map from "../Map";
 import Platform from "../Platform";
 import Collectable from "../Collectable";
 import Zombie from "../zombie";
+import Gem from "../Gem";
 
 
 export default class levelOne extends Map {
@@ -14,7 +15,7 @@ export default class levelOne extends Map {
 
     }
     generateEnemies(enemies){
-        enemies = [new Collectable(this.game, 400, 600, 20,20),
+        enemies = [new Gem(this.game, 400, 600, 0),
             new Zombie(this.game, 500, 200)];
         
             return(enemies);

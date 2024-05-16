@@ -1,25 +1,6 @@
 const express = require('express');
 const { createServer } = require('node:http');
-const { join } = require('node:path');
 const { Server } = require('socket.io');
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
-
-//async function main() {
-  // open the database file
-  /*const db = await open({
-    filename: 'chat.db',
-    driver: sqlite3.Database
-  }); 
-
-  // create our 'messages' table (you can ignore the 'client_offset' column for now)
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        client_offset TEXT UNIQUE,
-        content TEXT
-    );
-  `); */
  
   const app = express();
   const server = createServer(app);
@@ -90,6 +71,3 @@ const { open } = require('sqlite');
   server.listen(3000, () => {
     console.log('server running at http://localhost:3000');
   });
-//}
-
-//main();
