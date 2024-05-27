@@ -97,7 +97,7 @@ export default class Game {
       this.singlePlayer = false;
     });
 
-    this.socket.on('move', (x, y) => {
+    this.socket.on('move', (x, y) => { // should broadcast keys insted
       if (this.player2) {
         if (this.player2.positionX > x) {
           this.player2.flip = true;
@@ -333,7 +333,7 @@ export default class Game {
     ) {
       if (object.grounded && object.positionY + object.height > platform.positionY) {
         object.speedY = 0
-        object.positionY = platform.positionY - object.height
+       // object.positionY = platform.positionY - object.height
         object.grounded = true
       }
       return true
@@ -373,13 +373,13 @@ export default class Game {
 
   playerPlatformCollision(player, platform) {
     if (this.checkPlatformCollision(player, platform)) {
-      if (player.positionY > platform.positionY + 10 && player.positionY + player.height < platform.positionY + platform.height - 10) {
-        if (player.speedX > 0){
-          player.positionX = platform.positionX - player.width;
+      if (player.hitboxY > platform.positionY + 10 && player.positionY + player.height < platform.positionY + platform.height - 10) {
+        if (!player.flip){
+          player.positionX = platform.positionX - player.hitboxWidth - player.hitboxXMagicNumber;
         } else {
-          player.positionX = platform.positionX + platform.width;
+          player.positionX = platform.positionX + platform.width - player.hitboxXMagicNumber;
         }
-      } else if (player.speedY <= 0 && player.height / 3 + player.positionY > platform.positionY && platform.isSolid) {
+      } else if (player.speedY <= 0 && player.hitboxHeight / 3 + player.hitboxY > platform.positionY && platform.isSolid) {
         player.positionY = platform.positionY + platform.height
 
       }  else {
