@@ -10,6 +10,7 @@ export default class Collectable extends Enemy{
         this.positionY = y;
         this.width = width;
         this.height = height;
+        this.id = 0;
 
 
     }

@@ -25,7 +25,7 @@ export default class Game {
     this.scoreCounter = 0;
     this.projectiles = []
 
-    this.camera = new Camera(this, this.player.positionX, 0, 0, 100)
+    this.camera = new Camera(this, 0, 0, 0, 100)
     this.ground = this.height - 70;
     this.platforms = [
       new Platform(this, 0, this.ground, this.width, 100, true),
@@ -36,16 +36,17 @@ export default class Game {
     this.level = [new levelOne(this)]
     this.currentLevel = 0;
     // this.background = new Background(this);
+    this.player2 = new Player(this, 1);
 
     this.enemies = this.level[this.currentLevel].generateEnemies(this.enemies);
     this.enemyTimer = 0;
     this.enemyInterval = 1000;
-
     this.pause = true;
 
+    this.level[this.currentLevel].setup();
 
-    this.player2 = new Player(this, 1);
-    this.player2.positionY = 200;
+
+  
     this.room = getQueryParameter('room') || getRandomString(8);
     window.history.replaceState(
       {},
@@ -88,6 +89,7 @@ export default class Game {
       this.singlePlayer = false;
       this.player.id = 1;
       this.player2.id = 0;
+      this.socket.emit('syncRequest')
     });
 
     this.socket.on('2Players', () => {
@@ -136,9 +138,9 @@ export default class Game {
       } catch{}
       // update enemies
       this.enemies = newEnemies;
-      this.enemies.forEach((enemy, i) => {
+      /*this.enemies.forEach((enemy, i) => {
         enemy.setEnemy(enemies[i])
-      });
+      }); */
     });
 
     this.socket.on('enemyChange', (enemy, i) => {
@@ -371,10 +373,16 @@ export default class Game {
 
   playerPlatformCollision(player, platform) {
     if (this.checkPlatformCollision(player, platform)) {
-      if (player.speedY < 0 && player.height / 3 + player.positionY > platform.positionY && platform.isSolid) {
+      if (player.positionY > platform.positionY + 10 && player.positionY + player.height < platform.positionY + platform.height - 10) {
+        if (player.speedX > 0){
+          player.positionX = platform.positionX - player.width;
+        } else {
+          player.positionX = platform.positionX + platform.width;
+        }
+      } else if (player.speedY <= 0 && player.height / 3 + player.positionY > platform.positionY && platform.isSolid) {
         player.positionY = platform.positionY + platform.height
 
-      } else {
+      }  else {
         player.positionY = platform.positionY - player.height
         player.grounded = true
       }
@@ -390,8 +398,7 @@ export default class Game {
     this.enemies = this.level[this.currentLevel].generateEnemies(this.enemies)
     console.log(this.enemies);
 
-    this.player.positionX = 0;
-    this.player.positionY = 365;
+    this.level[this.currentLevel].setup();
     if (this.player.ammo < 5)
       this.player.ammo++
     this.player.direction = 1;

@@ -29,6 +29,10 @@ export default class Camera {
         //else this.y = 0;
         if (this.y > 0)
           this.y = 0;
+
+        if (this.x + this.width > maxX){
+          this.x = maxX - this.width;
+        }
         
     }
   

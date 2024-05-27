@@ -17,9 +17,9 @@ export default class UserInterface{
         context.shadowColor = 'black'
         context.textAlign = 'left'
         context.font = `${this.fontSize}px ${this.fontFamily}`
-        context.fillText(`HP: ${this.game.player.hp}`, 20, 50)
-        context.fillText(`Time: ${(this.game.gameTime * 0.001).toFixed(1)}`, 20, 80)
-        context.fillText(`Score: ${this.game.scoreCounter}`, 20, 110)
+       // context.fillText(`HP: ${this.game.player.hp}`, 20, 50)
+        //context.fillText(`Time: ${(this.game.gameTime * 0.001).toFixed(1)}`, 20, 80)
+        context.fillText(`Score: ${this.game.scoreCounter}`, 20, 50)
         
 
         if (this.game.gameOver) {

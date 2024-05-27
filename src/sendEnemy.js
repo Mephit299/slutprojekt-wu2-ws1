@@ -1,5 +1,6 @@
 import Collectable from "./Collectable";
 import Enemy from "./Enemy";
+import Gem from "./Gem";
 import Zombie from "./zombie";
 
 export default class sendEnemy{
@@ -18,7 +19,9 @@ export default class sendEnemy{
             if (enemy.id === 0){
                 return(new Collectable(game, enemy.positionX, enemy.positionY, 20, 20))
             } else if (enemy.id === 1){
-                return
+                return(new Gem(game, enemy.positionX, enemy.positionY, enemy.id))
+            } else if (enemy.id === 2) {
+                return(new Gem(game, enemy.positionX, enemy.positionY, enemy.id))
             }
         } else {
             if (enemy.id === 0){

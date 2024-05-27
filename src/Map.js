@@ -17,4 +17,12 @@ export default class Map {
   addPlatform(platform) {
     this.platforms.push(platform)
   }
+  
+  setup(){
+    this.game.player2.positionX = 0;
+    this.game.player2.positionY = 365;
+    this.game.player.positionX = 100;
+    this.game.player.positionY = 365;
+    
+  }
 }
